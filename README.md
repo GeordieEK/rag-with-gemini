@@ -191,22 +191,26 @@ First you need to choose a URL (or list of URLs) you want to scrape data from. T
 
 <details>
 <summary>Using fetch to scrape data from a URL</summary>
+
 ```js
 const response = await fetch(url);
 const text = await response.text();
 ```
+
 </details>
 
 Once you have the text, we want to remove unrelated content like the header, navigation, footer. Mozilla makes a standalone version of their Reader model available which we will take advantage of. The `JSDOM` and `Readability` classes are already imported for you.
 
 <details>
 <summary>Using Readability to parse the page into a single article</summary>
+
 ```js
 const doc = new JSDOM(text, { url }).window.document;
 const reader = new Readability(doc);
 const article = reader.parse();
 const data = `${article.title}\n\n${article.textContent}`.trim();
 ```
+
 </details>
 
 Once we have the article content as data we need to split it into chunks. Smaller chunks contain more focused context and help to improve search results.
@@ -215,6 +219,7 @@ Langchain is a more comprehensive framework for building GenAI applications, but
 
 <details>
 <summary>Using the RecursiveCharacterTextSplitter to chunk up the text</summary>
+
 ```js
 const splitter = new RecursiveCharacterTextSplitter({
   chunkOverlap: 128,
@@ -222,6 +227,7 @@ const splitter = new RecursiveCharacterTextSplitter({
 });
 const chunks = await splitter.splitText(data);
 ```
+
 </details>
 
 Now we have chunks of data, we can create vector embeddings of them using the `GoogleGenerativeAI` library, but with a different model than earlier.
